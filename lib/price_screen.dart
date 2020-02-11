@@ -11,7 +11,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'AUD';
   String cryptoCurrency = 'BTC';
-  String coinValueInUSD = '?';
+  String coinValue = '?';
 
   // Android OS
   DropdownButton<String> androidDropdown() {
@@ -60,11 +60,12 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
+  Map<String, String> coinValues = {};
   void getData() async {
     try {
       var data = await CoinData().getCoinData(selectedCurrency);
       setState(() {
-        coinValueInUSD = data;
+        coinValues = data;
       });
     } catch (e) {
       print(e);
@@ -87,26 +88,25 @@ class _PriceScreenState extends State<PriceScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightBlueAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              CryptoCard(
+                coinValue: coinValues['BTC'],
+                selectedCurrency: selectedCurrency,
+                cryptoCurrency: 'BTC',
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = $coinValueInUSD $selectedCurrency',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
+              CryptoCard(
+                coinValue: coinValues['ETH'],
+                selectedCurrency: selectedCurrency,
+                cryptoCurrency: 'ETH',
               ),
-            ),
+              CryptoCard(
+                coinValue: coinValues['LTC'],
+                selectedCurrency: selectedCurrency,
+                cryptoCurrency: 'LTC',
+              ),
+            ],
           ),
           Container(
             height: 150.0,
@@ -116,6 +116,43 @@ class _PriceScreenState extends State<PriceScreen> {
             child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CryptoCard extends StatelessWidget {
+  const CryptoCard({
+    @required this.coinValue,
+    @required this.selectedCurrency,
+    @required this.cryptoCurrency,
+  });
+
+  final String coinValue;
+  final String selectedCurrency;
+  final String cryptoCurrency;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+      child: Card(
+        color: Colors.lightBlueAccent,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+          child: Text(
+            '1 $cryptoCurrency = $coinValue $selectedCurrency',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }
