@@ -61,9 +61,13 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 
   Map<String, String> coinValues = {};
+  bool isWaiting = false;
+
   void getData() async {
+    isWaiting = true;
     try {
       var data = await CoinData().getCoinData(selectedCurrency);
+      isWaiting = false;
       setState(() {
         coinValues = data;
       });
@@ -92,17 +96,17 @@ class _PriceScreenState extends State<PriceScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               CryptoCard(
-                coinValue: coinValues['BTC'],
+                coinValue: isWaiting ? '?' : coinValues['BTC'],
                 selectedCurrency: selectedCurrency,
                 cryptoCurrency: 'BTC',
               ),
               CryptoCard(
-                coinValue: coinValues['ETH'],
+                coinValue: isWaiting ? '?' : coinValues['ETH'],
                 selectedCurrency: selectedCurrency,
                 cryptoCurrency: 'ETH',
               ),
               CryptoCard(
-                coinValue: coinValues['LTC'],
+                coinValue: isWaiting ? '?' : coinValues['LTC'],
                 selectedCurrency: selectedCurrency,
                 cryptoCurrency: 'LTC',
               ),
